@@ -1,6 +1,6 @@
 # Data files
 Data/
-cache
+cache/
 *.log
 progress.txt
 
