@@ -12,9 +12,8 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 
 import diskcache
-import time
 
-import phenix
+#import phenix
 import process
 
 from cjwutils.misc.simrpathutils import path_to_linux
@@ -59,45 +58,6 @@ def main():
             ]),
     ], style={'margin-left': '15px', 'margin-top':'15px', 'width':'75%'})
 
-    @app.long_callback(
-       output=Output('button-info', 'children'),
-       inputs=( Input('submit-file', 'n_clicks'),
-                State('input-image-file', 'value'),
-                State('save-image-file', 'value'),
-                State('projection', 'value')),
-       prevent_initial_call=True
-    )
-    def start_process(n_clicks, value, saveto, projection):
-        if n_clicks < 1:
-            return "Enter image file and press submit"
-        npath = path_to_linux(value)
-        spath = os.path.join(os.path.split(npath)[0], saveto)
-
-        if not os.path.exists(npath):
-            return value + " path does not exist"
-            
-        if not os.path.exists(spath):
-            try:
-                os.makedirs(spath)
-            except:
-                return "can't save to " + saveto
-        else:
-            if not os.path.isdir(spath):
-                return saveto + " exists but isn't a directory"
-
-        if os.path.exists(npath):
-            logging.info("Starting process")
-            orig_err = sys.stderr   
-            serr = open("progress.txt", "w")
-            sys.stderr = serr 
-            process.convert(npath, spath, projection) 
-            serr.close()
-            sys.stderr = orig_err
-            return f"Converted files are in {value}/{saveto}"
-
-        else:
-            return value + " path does not exist"
-        return "huh"
     
     @app.callback(
         output=[Output('pbar', 'value'),
@@ -105,7 +65,7 @@ def main():
         inputs=Input('interval', 'n_intervals'),
         prevent_initial_call=True)
     def progress_callback(n_intervals):
-        
+ 
         try:
             with open('progress.txt', 'r') as pf:
                 raw = pf.read()

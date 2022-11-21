@@ -1,0 +1,3 @@
+- make sure the images foder is there and is "Images"
+- get rid of quote marks at the start and end of path
+- 

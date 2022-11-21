@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import tempfile
 
 import dash
 from dash import html
@@ -34,6 +35,8 @@ def main():
 
     proj_choices = dcc.Dropdown(proj_list, 'MAX', id='projection',
                                 style={'width': '10em'})
+    
+    interval = dcc.Interval(id='interval', interval=500*1000, n_intervals=0)
     app.layout = html.Div(
         [   html.H5("Enter the location of the Images folder"),
             html.Div(dcc.Input(id='input-image-file', type='text', size='128')),
@@ -51,7 +54,8 @@ def main():
             dbc.Progress(id='pbar', value=0, label="Progress",
                          style={'height': '25px', 'width': '40%'},
             ),
-            dcc.Interval(id='interval', interval=1000, n_intervals=0),
+            interval,
+            #dcc.Interval(id='interval', interval=500*1000, n_intervals=0),
             ]),
     ], style={'margin-left': '15px', 'margin-top':'15px', 'width':'75%'})
 
@@ -67,6 +71,7 @@ def main():
         if n_clicks < 1:
             return "Enter image file and press submit"
         npath = path_to_linux(value)
+        npath = npath.strip('" ')
         spath = os.path.join(os.path.split(npath)[0], saveto)
 
         if not os.path.exists(npath):
@@ -85,9 +90,10 @@ def main():
             logging.info("Starting process")
             orig_err = sys.stderr   
             serr = open("progress.txt", "w")
+            #with tempfile.NamedTemporaryFile(".") as serr:
             sys.stderr = serr 
             process.convert(npath, spath, projection) 
-            serr.close()
+            #serr.close()
             sys.stderr = orig_err
             return f"Converted files are in {value}/{saveto}"
 

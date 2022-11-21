@@ -1,6 +1,5 @@
 import glob
 import os
-from re import I
 import sys
 
 from joblib import Parallel, delayed
@@ -26,7 +25,6 @@ elif sys.platform == 'darwin':
 else:
     fiji = "/n/projects/Fiji/Fiji.app/ImageJ-linux64"
 
-    
 if sys.platform == 'win32':
     correction_image_file = 's:/micro/cry/ww2630/cor_ref.tif'
 elif sys.platform == 'linux':
