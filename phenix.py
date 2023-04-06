@@ -146,7 +146,8 @@ def correct_flatness(img, cor_img):
     
     cmax = cor_img.max()
     n_cor_img = cor_img/cmax
-    corrected = (img - 90)/n_cor_img
+    cfact = 90 if img.min() >= 90 else img.min()
+    corrected = (img - cfact)/n_cor_img
     
     return corrected
     
@@ -185,7 +186,8 @@ def imwrite(filename, data, axes="CYX", resolution=None, spacing=1,
                       'spacing': spacing,
                       'Composite mode':'composite',
                       'LUTs':luts})
-    
+
+
 def pfunc(d, filenames, **kwargs):
     fdir = kwargs['folder']
     nz = kwargs['nz']
@@ -340,7 +342,7 @@ def field_stack(_df, image_path, cor_image, savedir, project, well, field, color
         if project=='MAX':
             pstack = stack.max(axis=0)
         elif project=='SUM':
-            pstack = stack.sum(axis=0)
+            pstack = stack.astype(np.float32).sum(axis=0)
         else:
             pstack = stack
         
@@ -349,7 +351,11 @@ def field_stack(_df, image_path, cor_image, savedir, project, well, field, color
         else:
             cstack = pstack
 
-        cstack = cstack.astype(np.uint16)
+        if cstack.max() < 2**16:
+            cstack = cstack.astype(np.uint16)
+        else:
+            cstack = cstack.astype(np.float32)
+        
         imwrite(f"{savedir}/{sname}", cstack, axes,
                 resolution=resolution, spacing=zp, colors=colors)
         return sname
