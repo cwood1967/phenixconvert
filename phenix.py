@@ -306,10 +306,12 @@ def dataframe_from_xml(xmldata):
     df = pd.DataFrame(image_dict)
     return df
 
-def field_stack(_df, image_path, cor_image, savedir, project, well, field, colors):
+def field_stack(_df, image_path, cor_image, savedir, project, options,
+                well, field, colors):
     
         if project not in ["MAX", "SUM", "MEAN"]:
             project = None
+
         h, w = int(_df.iloc[0].height), int(_df.iloc[0].width)
         nchannels = len(_df.channel.unique())
         nz = len(_df.plane.unique())
@@ -346,13 +348,19 @@ def field_stack(_df, image_path, cor_image, savedir, project, well, field, color
         else:
             pstack = stack
         
-        if len(cor_image) > 0:
-            cstack = correct_flatness(pstack, cor_image)
+        if "Flatfield Correction" in options:
+            if len(cor_image) > 0:
+                cstack = correct_flatness(pstack, cor_image)
+            else:
+                cstack = pstack
         else:
             cstack = pstack
 
         if cstack.max() < 2**16:
-            cstack = cstack.astype(np.uint16)
+            if "32-bit" in options:
+                cstack = cstack.astype(np.float32)
+            else:
+                cstack = cstack.astype(np.uint16)
         else:
             cstack = cstack.astype(np.float32)
         

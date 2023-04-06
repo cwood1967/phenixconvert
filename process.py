@@ -12,6 +12,8 @@ import phenix
 from phenix import fiji
 from phenix import correction_image  
 
+checkbox = {'options':['Flatfield Correction', '32-bit'],
+            'values':['Flatfield Correction']}
 
 def xml_to_grid(image_path, saveto):
     
@@ -32,7 +34,7 @@ def xml_to_grid(image_path, saveto):
     return fig
 
 
-def convert(image_path, savedir, projection):
+def convert(image_path, savedir, projection, options):
 
     pxml_file = f"{image_path}/Index.idx.xml"
     xmldata = parse(pxml_file)
@@ -59,7 +61,8 @@ def convert(image_path, savedir, projection):
     colors = ["green", "magenta", "yellow", "blue"]
     for f, gdf in tqdm(fg):
         _ = phenix.field_stack(gdf, image_path, xcor, savedir,
-                                      projection, f[1], f[0], colors=colors) 
+                                      projection, options,
+                                      f[1], f[0], colors=colors) 
     
 
 
