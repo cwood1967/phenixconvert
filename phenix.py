@@ -343,6 +343,8 @@ def field_stack(_df, image_path, cor_image, savedir, project, options,
         
         if project=='MAX':
             pstack = stack.max(axis=0)
+        elif project=='MEAN':
+            pstack = stack.astype(np.float32).mean(axis=0)
         elif project=='SUM':
             pstack = stack.astype(np.float32).sum(axis=0)
         else:

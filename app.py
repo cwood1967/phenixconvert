@@ -33,7 +33,7 @@ def main(port=10000):
                     long_callback_manager=lcm,
                     external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-    proj_list = ['None', 'MAX', 'SUM']
+    proj_list = ['None', 'MAX', 'MEAN', 'SUM']
 
     proj_choices = dcc.Dropdown(proj_list, 'MAX', id='projection',
                                 style={'width': '10em'})
